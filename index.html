@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal Example</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/2.35.3/css/jquery.terminal.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.terminal/2.35.3/js/jquery.terminal.min.js"></script>
+    <style>
+        html, body, #terminal {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="terminal"></div>
+    <script>
+        $(function() {
+            $('#terminal').terminal({
+                hello: function(name) {
+                    this.echo('Hello, ' + (name || 'World') + '!');
+                },
+                date: function() {
+                    this.echo(new Date().toLocaleString());
+                },
+                echo: function(...args) {
+                    this.echo(args.join(' '));
+                },
+                add: function(...args) {
+                    const sum = args.reduce((a, b) => parseFloat(a) + parseFloat(b), 0);
+                    this.echo('Sum: ' + sum);
+                },
+                multiply: function(...args) {
+                    const product = args.reduce((a, b) => parseFloat(a) * parseFloat(b), 1);
+                    this.echo('Product: ' + product);
+                },
+                reverse: function(str) {
+                    this.echo(str.split('').reverse().join(''));
+                },
+                uppercase: function(str) {
+                    this.echo(str.toUpperCase());
+                },
+                lowercase: function(str) {
+                    this.echo(str.toLowerCase());
+                },
+                clear: function() {
+                    this.clear();
+                },
+                help: function() {
+                    this.echo('Available commands:');
+                    this.echo('hello [name] - Greet the user');
+                    this.echo('date - Display current date and time');
+                    this.echo('echo [args...] - Echo back the arguments');
+                    this.echo('add [numbers...] - Add numbers');
+                    this.echo('multiply [numbers...] - Multiply numbers');
+                    this.echo('reverse [string] - Reverse a string');
+                    this.echo('uppercase [string] - Convert string to uppercase');
+                    this.echo('lowercase [string] - Convert string to lowercase');
+                    this.echo('clear - Clear the terminal');
+                    this.echo('help - Display this help message');
+                    this.echo('guess - Play a number guessing game');
+                },
+                guess: function() {
+                    const randomNumber = Math.floor(Math.random() * 100) + 1;
+                    let attempts = 0;
+                    
+                    this.echo('Welcome to the Number Guessing Game!');
+                    this.echo('I\'m thinking of a number between 1 and 100.');
+                    
+                    const guessPrompt = (guess) => {
+                        attempts++;
+                        guess = parseInt(guess);
+                        
+                        if (isNaN(guess)) {
+                            this.echo('Please enter a valid number.');
+                        } else if (guess < randomNumber) {
+                            this.echo('Too low! Try again.');
+                        } else if (guess > randomNumber) {
+                            this.echo('Too high! Try again.');
+                        } else {
+                            this.echo(`Congratulations! You guessed the number ${randomNumber} in ${attempts} attempts!`);
+                            this.pop();
+                            return;
+                        }
+                        
+                        this.push(guessPrompt, {
+                            prompt: 'Your guess: '
+                        });
+                    };
+                    
+                    this.push(guessPrompt, {
+                        prompt: 'Your guess: '
+                    });
+                }
+            }, {
+                greetings: 'Welcome to the Terminal! Type "help" for available commands.',
+                prompt: '> ',
+                completion: true
+            });
+        });
+    </script>
+</body>
+</html>
